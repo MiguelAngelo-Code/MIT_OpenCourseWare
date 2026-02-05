@@ -317,7 +317,7 @@ def play_hand(hand, word_list):
         # Otherwise (the input is not two exclamation points):
         else:
             # If the word is valid:
-            if is_valid_word(word) == True:
+            if is_valid_word(word, hand, word_list) == True:
                 # Tell the user how many points the word earned,
                 score = get_word_score(word, calculate_handlen(hand))
                 print(f'"{word}" earned {score} points')
@@ -337,6 +337,7 @@ def play_hand(hand, word_list):
     # Game is over (user entered '!!' or ran out of letters),
     # so tell user the total score
     print(f"Hand Over! Total score this hand:", total_score)
+    print("-----------------------------------------------")
 
     # Return the total score as result of function
     return total_score
@@ -387,9 +388,9 @@ def substitute_hand(hand, letter):
         while calculate_handlen(hand) < HAND_SIZE:
 
             x = random.choice(randomise_VorC)
-            n = random.choice(x)
+            n = random.choice(x).lower()
 
-            if hand[n] not in hand:
+            if hand.get(n) not in hand:
                 hand[n] = hand.get(n, 0) + 1
 
                 return hand
@@ -442,64 +443,67 @@ def play_game(word_list):
     # Main game loop runs untill all hands have been played
     while current_hand < tot_hands:
 
-        # if hand > 1 offer repeat
+        # if hand > 1 offer to repeat same hand
         if current_hand > 0: 
             
-            # Loop contintual prompts untill correct input
-            while repeat != "yes" or "no":
-                repeat = input("Would you like to replay the hand? ").lower()
-                if repeat != "yes" or "no":
+            # Request user response and sets repeat to true or false
+            while True: 
+                repeat_offer = input("Would you like to replay the hand? ").lower().strip()
+
+                if repeat_offer in ("yes", "y"):
+                    repeat = True
+                    break
+                elif repeat_offer in ("no", "n"):
+                    repeat = False
+                    break
+                else:
                     print('Please respond "yes" or "no"')
         
-            #  If repeat requested
-            if repeat == "yes":
-                # Deal Same hand
-                # Play hand (shows hand, request input returns score)
-                # Updates total score
-                print("not implemented")
-                break
-   
-    
-        # elif repeat not requested, substitution not used
-        if substitution_count < 1:
+        else: 
+            repeat = False
+        
+        # Repeat is false therfore hand is delt, dislayed and substitution considered
+        if repeat == False: 
+
             # Deal hand
             hand = deal_hand(7)
-            # Display hand
-            display_hand(hand)
+
             # Offer substitution
-            sub_offer = ""
-            while sub_offer != "yes" or "no":
-                sub_offer = input("Would you like to substitute a letter? ").lower()
-                if sub_offer != "yes" or "no":
-                    print('Please respond "yes" or "no"')
-            
-            if sub_offer == "yes":
-                sub_letter = input("what letter would you like to substitute? ")
-                # Todo: substition func
-                substitute_hand(hand, sub_letter)
-                # Todo: substitution_count += 1
-                substitution_count += 1
-            # Play hand
-            total_score += play_hand(hand, word_list)
-            
-        
-        # Repeat not chosen, and sub not chosen
-        else:
-            # Deal hand
-            hand = deal_hand(7)
-            # Play hand
-            total_score += play_hand(hand, word_list)
-            
+            if substitution_count < 1:
+                
+                # Display hand
+                display_hand(hand)
+
+                # Loops for correct input response
+                while True:
+                    sub_offer = input("Would you like to substitute a letter? ").lower().strip()
+
+                    if sub_offer in ("yes", "y"):
+                        # Request Substitution letter
+                        sub_letter = input("what letter would you like to substitute? ")
+
+                        # Substition func & increment sub count
+                        substitute_hand(hand, sub_letter)
+                        substitution_count += 1
+
+                        break
+                        
+                    elif sub_offer in ("no", "n"):
+                        break
+                    else:
+                        print('Please respond "yes" or "no"')
+
+        # Hand has either been repeated or redelt. Now hand is played & score updated
+        print("-----------------------------------------------")
+        total_score += play_hand(hand, word_list)
+
         # Increment current hand
         current_hand += 1
     
-    # After all hands played
+    # Loop ends, all hands played
 
-    # Print: All hands playes
+    # Prints total score
     print(f'Game Over!, you scored: {total_score}')
-
-    
-    
 
 
 #
