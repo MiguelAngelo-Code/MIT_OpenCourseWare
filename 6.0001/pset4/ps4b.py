@@ -70,7 +70,9 @@ class Message(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
 
     def get_message_text(self):
         '''
@@ -78,7 +80,7 @@ class Message(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +89,7 @@ class Message(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words
 
     def build_shift_dict(self, shift):
         '''
@@ -103,7 +105,31 @@ class Message(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        pass #delete this line and replace with your code here
+
+        shift_dict = {}
+
+        for i in range(65, 91):
+
+            if i + shift > 90:
+                diff = shift - (90 - i)
+                new_char = 65 + diff
+
+                shift_dict[ord(i)] = ord(new_char)
+            else: 
+                shift_dict[ord(i)] = ord(i + shift)
+        
+        for i in range(97, 123):
+
+            if i + shift > 122:
+                diff = shift - (122 - i)
+                new_char = 97 + diff
+
+                shift_dict[ord(i)] = ord(new_char)
+            else: 
+                shift_dict[ord(i)] = ord(i + shift)
+        
+        return shift_dict
+
 
     def apply_shift(self, shift):
         '''
@@ -117,7 +143,15 @@ class Message(object):
         Returns: the message text (string) in which every character is shifted
              down the alphabet by the input shift
         '''
-        pass #delete this line and replace with your code here
+        shift_dict = self.build_shift_dict(shift)
+        plain_text = self.message_text
+        cipher_text = ""
+
+        for char in plain_text:
+            cipher_text += shift_dict.get(char, char)
+        
+        return cipher_text
+
 
 class PlaintextMessage(Message):
     def __init__(self, text, shift):
