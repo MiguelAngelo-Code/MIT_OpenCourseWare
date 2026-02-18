@@ -169,7 +169,10 @@ class PlaintextMessage(Message):
             self.message_text_encrypted (string, created using shift)
 
         '''
-        pass #delete this line and replace with your code here
+        Message.__init__(self, text)
+        self.shift = shift
+        self.get_encryption_dict(shift)
+        self.get_message_text_encrypted(shift)
 
     def get_shift(self):
         '''
@@ -177,7 +180,7 @@ class PlaintextMessage(Message):
         
         Returns: self.shift
         '''
-        pass #delete this line and replace with your code here
+        return self.shift
 
     def get_encryption_dict(self):
         '''
@@ -185,7 +188,7 @@ class PlaintextMessage(Message):
         
         Returns: a COPY of self.encryption_dict
         '''
-        pass #delete this line and replace with your code here
+        return self.get_encryption_dict()
 
     def get_message_text_encrypted(self):
         '''
@@ -193,7 +196,7 @@ class PlaintextMessage(Message):
         
         Returns: self.message_text_encrypted
         '''
-        pass #delete this line and replace with your code here
+        return self.get_message_text_encrypted()
 
     def change_shift(self, shift):
         '''
@@ -205,7 +208,7 @@ class PlaintextMessage(Message):
 
         Returns: nothing
         '''
-        pass #delete this line and replace with your code here
+        self.shift = shift
 
 
 class CiphertextMessage(Message):
@@ -219,7 +222,7 @@ class CiphertextMessage(Message):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        Message.__init__(self, text)
 
     def decrypt_message(self):
         '''
@@ -237,7 +240,16 @@ class CiphertextMessage(Message):
         Returns: a tuple of the best shift value used to decrypt the message
         and the decrypted message text using that shift value
         '''
-        pass #delete this line and replace with your code here
+        # Empty tuple to store best valuse and decrypted message
+        t = ()
+        message = self.message_text
+
+        # Loop Over all possible shift ints
+        for i in range(0,26):
+            s = 26 - i
+            decrypted_text = self.apply_shift(s)
+
+
 
 if __name__ == '__main__':
 
