@@ -112,7 +112,7 @@ class Message(object):
 
             if i + shift > 90:
                 diff = shift - (90 - i)
-                new_char = 65 + diff
+                new_char = 64 + diff
 
                 shift_dict[chr(i)] = chr(new_char)
             else: 
@@ -123,7 +123,7 @@ class Message(object):
 
             if i + shift > 122:
                 diff = shift - (122 - i)
-                new_char = 97 + diff
+                new_char = 96 + diff
 
                 shift_dict[chr(i)] = chr(new_char)
             else: 
@@ -246,11 +246,10 @@ class CiphertextMessage(Message):
         top_score = 0
         best_shift = 0
 
-        word_list = load_words(WORDLIST_FILENAME)
+        word_list = self.valid_words
 
         # Loop Over all possible shift ints
-        for i in range(0,26):
-            s = 26 - i
+        for s in range(26):
             decrypted_text = self.apply_shift(s)
 
             # iniciate valid_word counter
@@ -264,7 +263,7 @@ class CiphertextMessage(Message):
                     valid_words += 1
             
             #if  valid_word > top score
-            if valid_words > top_score:
+            if valid_words >= top_score:
 
                 top_score = valid_words
                 plain_text = decrypted_text
@@ -323,4 +322,9 @@ if __name__ == '__main__':
     #TODO: WRITE YOUR TEST CASES HERE
 
     #TODO: best shift value and unencrypted story 
+
+    print("/n Story")
+    story = get_story_string()
+    ciphertext = CiphertextMessage(story)
+    print(ciphertext.decrypt_message())
     
