@@ -70,7 +70,8 @@ class SubMessage(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
     
     def get_message_text(self):
         '''
@@ -78,7 +79,7 @@ class SubMessage(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,7 +88,7 @@ class SubMessage(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words
                 
     def build_transpose_dict(self, vowels_permutation):
         '''
@@ -108,9 +109,24 @@ class SubMessage(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
+        VOWELS = ('a', 'e', 'i', 'o', 'u')
+        transpose_dict = {}
+        # Build dict maping i to i for uppercase and lowercase 
+        for i in range(65, 91):
+            transpose_dict[chr(i)] = chr(i)
+
+        for i in range(97, 123):
+            transpose_dict[chr(i)] = chr(i) 
+
+        # Mutate dict acording top a, e, i, o, u
+        i = 0
+        for letter in vowels_permutation:
+            transpose_dict[VOWELS[i]] = letter.lower()
+            transpose_dict[VOWELS[i].upper()] = letter.upper()
+            i += 1
         
-        pass #delete this line and replace with your code here
-    
+        return transpose_dict
+        
     def apply_transpose(self, transpose_dict):
         '''
         transpose_dict (dict): a transpose dictionary
@@ -119,7 +135,12 @@ class SubMessage(object):
         on the dictionary
         '''
         
-        pass #delete this line and replace with your code here
+        plain_txt = self.message_text
+        encrypted_txt = ""
+        for letter in plain_txt:
+            encrypted_txt += transpose_dict[letter]
+
+        return encrypted_txt
         
 class EncryptedSubMessage(SubMessage):
     def __init__(self, text):
