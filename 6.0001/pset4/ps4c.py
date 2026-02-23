@@ -109,7 +109,6 @@ class SubMessage(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
-        VOWELS = ('a', 'e', 'i', 'o', 'u')
         transpose_dict = {}
         # Build dict maping i to i for uppercase and lowercase 
         for i in range(65, 91):
@@ -121,8 +120,8 @@ class SubMessage(object):
         # Mutate dict acording top a, e, i, o, u
         i = 0
         for letter in vowels_permutation:
-            transpose_dict[VOWELS[i]] = letter.lower()
-            transpose_dict[VOWELS[i].upper()] = letter.upper()
+            transpose_dict[VOWELS_LOWER[i]] = letter.lower()
+            transpose_dict[VOWELS_UPPER[i]] = letter.upper()
             i += 1
         
         return transpose_dict
@@ -135,12 +134,15 @@ class SubMessage(object):
         on the dictionary
         '''
         
-        plain_txt = self.message_text
-        encrypted_txt = ""
-        for letter in plain_txt:
-            encrypted_txt += transpose_dict[letter]
+        original_txt = self.message_text
+        transpose_txt = ""
+        for letter in original_txt:
+            if letter.isalpha():
+                transpose_txt += transpose_dict.get(letter)
+            else: 
+                transpose_txt += letter
 
-        return encrypted_txt
+        return transpose_txt
         
 class EncryptedSubMessage(SubMessage):
     def __init__(self, text):
@@ -153,7 +155,7 @@ class EncryptedSubMessage(SubMessage):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        SubMessage.__init__(self, text)
 
     def decrypt_message(self):
         '''
@@ -173,8 +175,41 @@ class EncryptedSubMessage(SubMessage):
         
         Hint: use your function from Part 4A
         '''
-        pass #delete this line and replace with your code here
-    
+
+        # Create all permutations of vowles using recursion
+        vowel_permutations = get_permutations(VOWELS_LOWER)
+
+        best_score = 0        
+
+        # Loop premutations to brute-force solution
+        for perm in vowel_permutations:
+
+            # Build temp dictionary & apply transpose
+            temp_dict = self.build_transpose_dict(perm)
+            temp_transpose_txt = self.apply_transpose(temp_dict)
+
+            
+
+            # Count valid words & updated best permutation
+            valid_words = 0
+            temp_txt_list = temp_transpose_txt.split()
+
+            for word in temp_txt_list:
+                if is_word(self.valid_words, word) == True:
+                    valid_words += 1
+            
+            if valid_words > best_score:
+                best_score = valid_words
+                decrypyed_txt = temp_transpose_txt
+        
+        print(best_score)
+
+        if best_score < 1:
+            return self.message_text
+        # Store & return decrypted text
+        else:
+            return decrypyed_txt
+        
 
 if __name__ == '__main__':
 
@@ -188,4 +223,3 @@ if __name__ == '__main__':
     enc_message = EncryptedSubMessage(message.apply_transpose(enc_dict))
     print("Decrypted message:", enc_message.decrypt_message())
      
-    #TODO: WRITE YOUR TEST CASES HERE
